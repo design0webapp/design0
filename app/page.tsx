@@ -1,5 +1,6 @@
 import Search from "@/components/search";
 import { fetchImages } from "@/lib/backend";
+import ImageCard from "@/components/image-card";
 
 export const revalidate = 60;
 
@@ -19,16 +20,7 @@ export default async function HomePage({
       <Search query={searchParams.query} />
       <div className="mt-10 columns-1 sm:columns-2 md:columns-3 gap-3">
         {images.images.map((image) => (
-          <div
-            key={image.id}
-            className="mb-3 rounded-lg shadow-xl cursor-pointer hover:scale-105 transition-all"
-          >
-            <img
-              src={image.url}
-              alt={image.description}
-              className="rounded-lg"
-            />
-          </div>
+          <ImageCard key={image.id} image={image} />
         ))}
       </div>
     </div>

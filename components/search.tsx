@@ -9,6 +9,12 @@ export default function Search(props: { query: string | undefined }) {
   const [query, setQuery] = useState(props.query);
   const router = useRouter();
 
+  const handleSearch = () => {
+    if (query != undefined && query.trim().length > 0) {
+      router.push(`/?query=${query.trim()}`);
+    }
+  };
+
   return (
     <div className="w-[48rem] max-w-full flex space-x-2">
       <Input
@@ -19,14 +25,13 @@ export default function Search(props: { query: string | undefined }) {
           event.preventDefault();
           setQuery(event.currentTarget.value);
         }}
-      />
-      <Button
-        onClick={() => {
-          router.push(`/?query=${query}`);
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            handleSearch();
+          }
         }}
-      >
-        Search
-      </Button>
+      />
+      <Button onClick={handleSearch}>Search</Button>
     </div>
   );
 }

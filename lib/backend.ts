@@ -2,14 +2,14 @@
 
 const BACKEND_URL = process.env.BACKEND_URL;
 
-interface Image {
+export interface Image {
   id: string;
   url: string;
   category: string;
   description: string;
 }
 
-interface ImagesResponse {
+export interface ImagesResponse {
   images: Image[];
 }
 

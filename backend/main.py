@@ -152,6 +152,7 @@ def image_edit(req: EditRequest):
                 )
                 resp.raise_for_status()
     data = resp.json()["data"][0]
+    logger.info(f"edit image return data: {data}")
     return EditResponse(url=data["url"])
 
 

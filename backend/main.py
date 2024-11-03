@@ -23,6 +23,7 @@ pool = ConnectionPool(
 URL_SUFFIX = "?fm=jpg&q=80&w=1080&h=1080&fit=max"
 
 
+@app.get("/ping")
 def ping():
     with pool.connection() as conn:
         with conn.cursor() as cur:

@@ -151,7 +151,7 @@ def image_edit(req: EditRequest):
                     headers={"Api-Key": conf.ideogram_api_key},
                 )
                 resp.raise_for_status()
-    data = resp.json()["data"]
+    data = resp.json()["data"][0]
     return EditResponse(url=data["url"])
 
 

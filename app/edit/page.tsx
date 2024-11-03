@@ -3,6 +3,8 @@
 import { redirect } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { editImage } from "@/lib/backend";
 
 export default function EditPage({
   searchParams,
@@ -16,7 +18,11 @@ export default function EditPage({
   }
 
   const [isDrawing, setIsDrawing] = useState(false);
-  const [polygons, setPolygons] = useState<Path2D[]>([]);
+  const [polygons, setPolygons] = useState<number[][][]>([]);
+  const [prompt, setPrompt] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedImage, setEditedImage] = useState<string | null>(null);
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
 
@@ -47,7 +53,13 @@ export default function EditPage({
     // draw polygons on canvas
     ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
     for (const polygon of polygons) {
-      ctx.fill(polygon);
+      const path = new Path2D();
+      path.moveTo(polygon[0][0], polygon[0][1]);
+      for (let i = 1; i < polygon.length; i++) {
+        path.lineTo(polygon[i][0], polygon[i][1]);
+      }
+      path.closePath();
+      ctx.fill(path);
     }
   }, [searchParams.image, polygons]);
 
@@ -62,9 +74,8 @@ export default function EditPage({
     const x = (e.clientX - rect.x) * scaleX;
     const y = (e.clientY - rect.y) * scaleY;
 
-    const region = new Path2D();
-    region.moveTo(x, y);
-    setPolygons([...polygons, region]);
+    const newPolygon = [[x, y]];
+    setPolygons([...polygons, newPolygon]);
   };
 
   const draw = (e: React.MouseEvent) => {
@@ -80,69 +91,82 @@ export default function EditPage({
     const x = (e.clientX - rect.x) * scaleX;
     const y = (e.clientY - rect.y) * scaleY;
 
-    const region = polygons[polygons.length - 1];
-    region.lineTo(x, y);
-    setPolygons([...polygons.slice(0, polygons.length - 1), region]);
+    const lastPolygon = polygons[polygons.length - 1];
+    lastPolygon.push([x, y]);
+    setPolygons([...polygons.slice(0, polygons.length - 1), lastPolygon]);
   };
 
   const stopDrawing = () => {
     setIsDrawing(false);
-    if (polygons.length > 0) {
-      const region = polygons[polygons.length - 1];
-      region.closePath();
-    }
   };
 
-  const exportMask = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    // create a new mask canvas
-    const maskCanvas = document.createElement("canvas");
-    maskCanvas.width = canvas.width;
-    maskCanvas.height = canvas.height;
-    const maskCtx = maskCanvas.getContext("2d");
-    if (!maskCtx) return;
-
-    // draw polygons on mask canvas
-    maskCtx.fillStyle = "rgba(255, 255, 255, 1)";
-    for (const polygon of polygons) {
-      maskCtx.fill(polygon);
-    }
-
-    // export as PNG
-    const link = document.createElement("a");
-    link.download = "mask.png";
-    link.href = maskCanvas.toDataURL();
-    link.click();
-  };
-
-  const resetCanvas = () => {
+  const reset = () => {
     setPolygons([]);
+    setPrompt("");
   };
 
   return (
     <div className="px-2 py-10 mx-auto w-[64rem] max-w-full flex flex-col items-center justify-center">
       <h1 className="mb-4 text-4xl font-black">Edit Image</h1>
+      <p className="my-2 text-sm font-semibold line-clamp-1">
+        Drag-and-drop to select area you want to edit.
+      </p>
       <canvas
         ref={canvasRef}
         onMouseDown={startDrawing}
         onMouseMove={draw}
         onMouseUp={stopDrawing}
         onMouseLeave={stopDrawing}
-        className="max-w-full max-h-[calc(100vh-10rem)] cursor-crosshair"
+        className="max-w-full max-h-[calc(100vh-20rem)] cursor-crosshair"
       />
-      <p className="my-2 text-sm font-semibold line-clamp-1">
-        Drag-and-drop to select area you want to edit.
+      <p className="mt-4 mb-2 text-sm font-semibold line-clamp-1">
+        Describe what you want to draw.
       </p>
-      <Button onClick={resetCanvas}>Reset</Button>
-      <Button
-        className="mt-2"
-        onClick={exportMask}
-        disabled={polygons.length === 0}
-      >
-        Export Mask
-      </Button>
+      <Textarea
+        value={prompt}
+        onChange={(event) => {
+          event.preventDefault();
+          setPrompt(event.currentTarget.value);
+        }}
+        className="w-[30rem] max-w-full"
+      />
+      <div className="mt-6 flex space-x-2">
+        <Button
+          onClick={async () => {
+            try {
+              setIsEditing(true);
+              const resp = await editImage(
+                searchParams.image,
+                polygons,
+                prompt,
+              );
+              setEditedImage(resp.url);
+            } finally {
+              setIsEditing(false);
+            }
+          }}
+          disabled={
+            polygons.length === 0 ||
+            prompt.trim() === "" ||
+            isEditing ||
+            editedImage !== null
+          }
+        >
+          {isEditing ? "Editing..." : "Edit Image"}
+        </Button>
+        <Button variant={"outline"} onClick={reset}>
+          Reset
+        </Button>
+        {editedImage && (
+          <>
+            <img
+              src={editedImage}
+              className="w-full max-w-full"
+              alt="edited image"
+            />
+          </>
+        )}
+      </div>
     </div>
   );
 }

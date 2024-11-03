@@ -157,16 +157,21 @@ export default function EditPage({
         <Button variant={"outline"} onClick={reset}>
           Reset
         </Button>
-        {editedImage && (
-          <>
-            <img
-              src={editedImage}
-              className="w-full max-w-full"
-              alt="edited image"
-            />
-          </>
-        )}
       </div>
+      {editedImage && (
+        <div className="mt-6">
+          <div className="mt-6 mb-4 flex items-center">
+            <div className="flex-grow border-t border-gray-300"></div>
+            <div className="mx-4 text-gray-500 text-sm">Edited Image</div>
+            <div className="flex-grow border-t border-gray-300"></div>
+          </div>
+          <img
+            src={editedImage}
+            className="w-full max-w-full"
+            alt="edited image"
+          />
+        </div>
+      )}
     </div>
   );
 }

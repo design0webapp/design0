@@ -1,5 +1,10 @@
+import tempfile
+from pathlib import Path
 from typing import Optional
 
+import cv2
+import numpy as np
+import requests
 import uvicorn
 from fastapi import FastAPI
 from loguru import logger
@@ -26,7 +31,7 @@ URL_SUFFIX = "?fm=jpg&q=80&w=1080&h=1080&fit=max"
 
 
 @app.get("/ping")
-async def ping():
+def ping():
     with pool.connection() as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT 1")
@@ -45,7 +50,7 @@ class ImagesResponse(BaseModel):
 
 
 @app.get("/api/image/random")
-async def image_random(limit: int = 10) -> ImagesResponse:
+def image_random(limit: int = 10) -> ImagesResponse:
     resp = ImagesResponse(images=[])
     with pool.connection() as conn:
         with conn.cursor() as cur:
@@ -66,7 +71,7 @@ async def image_random(limit: int = 10) -> ImagesResponse:
 
 
 @app.get("/api/image/search")
-async def image_search(
+def image_search(
     query: str, limit: int = 10, category: Optional[str] = None
 ) -> ImagesResponse:
     query = "search_query: " + query
@@ -91,6 +96,63 @@ async def image_search(
                     )
                 )
     return resp
+
+
+class EditRequest(BaseModel):
+    image_url: str
+    polygons: list[list[list[float]]]
+    prompt: str
+
+
+class EditResponse(BaseModel):
+    url: str
+
+
+@app.post("/api/image/edit")
+def image_edit(req: EditRequest):
+    # Create a temporary directory
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Download the image
+        response = requests.get(req.image_url)
+        image_path = Path(temp_dir) / "image"
+        with open(image_path, "wb") as f:
+            f.write(response.content)
+
+        # Load the image
+        image = cv2.imread(str(image_path))
+
+        # Create a white mask with the same size as the image
+        mask = np.full(image.shape[:2], 255, dtype=np.uint8)
+
+        # Draw polygons in black on the mask
+        for polygon in req.polygons:
+            points = np.int32(polygon)
+            # Draw filled polygon in black (0)
+            cv2.fillPoly(mask, [points], 0)
+
+        # Save mask if needed
+        mask_path = Path(temp_dir) / "mask.png"
+        cv2.imwrite(str(mask_path), mask)
+
+        with open(image_path, "rb") as image_file:
+            with open(mask_path, "rb") as mask_file:
+                resp = requests.post(
+                    "https://api.ideogram.ai/edit",
+                    data={
+                        "prompt": req.prompt,
+                        "model": "V_2_TURBO",
+                        "magic_prompt_option": "AUTO",
+                        "style_type": "AUTO",
+                    },
+                    files={
+                        "image_file": image_file,
+                        "mask": mask_file,
+                    },
+                    headers={"Api-Key": conf.ideogram_api_key},
+                )
+                resp.raise_for_status()
+    data = resp.json()["data"]
+    return EditResponse(url=data["url"])
 
 
 if __name__ == "__main__":

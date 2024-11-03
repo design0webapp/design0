@@ -10,6 +10,8 @@ class Config(BaseSettings):
     pg_password: str
     # ollama
     ollama_host: str
+    # ideogram
+    ideogram_api_key: str
 
 
 conf = Config()

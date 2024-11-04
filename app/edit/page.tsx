@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { editImage } from "@/lib/backend";
 
+export const maxDuration = 60;
+
 export default function EditPage({
   searchParams,
 }: {

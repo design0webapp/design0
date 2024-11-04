@@ -141,7 +141,7 @@ def image_edit(req: EditRequest):
                     data={
                         "prompt": req.prompt,
                         "model": "V_2_TURBO",
-                        "magic_prompt_option": "AUTO",
+                        "magic_prompt_option": "ON",
                         "style_type": "AUTO",
                     },
                     files={

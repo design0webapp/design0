@@ -1,9 +1,0 @@
-fastapi==0.115.4
-psycopg==3.2.3
-psycopg-pool==3.2.3
-pydantic-settings==2.6.1
-uvicorn==0.32.0
-tenacity==9.0.0
-loguru==0.7.2
-opencv-python-headless==4.10.0.84
-requests==2.32.3

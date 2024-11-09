@@ -63,36 +63,42 @@ export default function EditPage({
     }
   }, [searchParams.image, polygons]);
 
-  const startDrawing = (e: React.MouseEvent) => {
-    setIsDrawing(true);
+  const getCoordinates = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) return null;
 
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
-    const x = (e.clientX - rect.x) * scaleX;
-    const y = (e.clientY - rect.y) * scaleY;
 
-    const newPolygon = [[x, y]];
+    let x, y;
+    if ("touches" in e) {
+      x = (e.touches[0].clientX - rect.x) * scaleX;
+      y = (e.touches[0].clientY - rect.y) * scaleY;
+    } else {
+      x = (e.clientX - rect.x) * scaleX;
+      y = (e.clientY - rect.y) * scaleY;
+    }
+
+    return [x, y];
+  };
+
+  const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    setIsDrawing(true);
+    const coords = getCoordinates(e);
+    if (!coords) return;
+    const newPolygon = [coords];
     setPolygons([...polygons, newPolygon]);
   };
 
-  const draw = (e: React.MouseEvent) => {
+  const draw = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
     if (!isDrawing) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const x = (e.clientX - rect.x) * scaleX;
-    const y = (e.clientY - rect.y) * scaleY;
-
+    const coords = getCoordinates(e);
+    if (!coords) return;
     const lastPolygon = polygons[polygons.length - 1];
-    lastPolygon.push([x, y]);
+    lastPolygon.push(coords);
     setPolygons([...polygons.slice(0, polygons.length - 1), lastPolygon]);
   };
 
@@ -117,6 +123,9 @@ export default function EditPage({
         onMouseMove={draw}
         onMouseUp={stopDrawing}
         onMouseLeave={stopDrawing}
+        onTouchStart={startDrawing}
+        onTouchMove={draw}
+        onTouchEnd={stopDrawing}
         className="max-w-full max-h-[calc(100vh-20rem)] cursor-crosshair"
       />
       <p className="mt-4 mb-2 text-sm font-semibold line-clamp-1">

@@ -129,7 +129,7 @@ export default function EditPage({
         onTouchMove={draw}
         onTouchEnd={stopDrawing}
         className="max-w-full max-h-[calc(100vh-20rem)] cursor-crosshair"
-        style={{ overscrollBehavior: "none" }}
+        style={{ touchAction: "none" }}
       />
       <p className="mt-4 mb-2 text-sm font-semibold line-clamp-1">
         Describe what you want to draw.

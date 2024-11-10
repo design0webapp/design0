@@ -4,6 +4,8 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
+import { Footer } from "@/components/footer";
+import React from "react";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({ subsets: ["latin"] });
@@ -28,6 +30,7 @@ export default function RootLayout({
       >
         {children}
         <Toaster />
+        <Footer />
       </body>
     </html>
   );

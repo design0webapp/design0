@@ -74,7 +74,7 @@ export default function AuthPage() {
   };
 
   return (
-    <>
+    <main className="min-h-screen flex flex-col">
       <CommonNavbar pageName={"Sign In"} />
       <div className="flex-1 flex items-center justify-center bg-gray-100">
         <div className="bg-white p-8 rounded-lg shadow-md w-96">
@@ -152,6 +152,6 @@ export default function AuthPage() {
           {/*</div>*/}
         </div>
       </div>
-    </>
+    </main>
   );
 }

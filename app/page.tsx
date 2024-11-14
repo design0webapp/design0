@@ -15,7 +15,7 @@ export default async function HomePage({
   const images = await fetchImages(searchParams.query);
 
   return (
-    <>
+    <main className="min-h-screen flex flex-col items-center justify-center">
       <CommonNavbar pageName={null} />
       <div className="flex-1 px-2 py-24 mx-auto w-[64rem] max-w-full flex flex-col items-center">
         <h1 className="text-4xl font-black">Welcome to Design0!</h1>
@@ -29,6 +29,6 @@ export default async function HomePage({
           ))}
         </div>
       </div>
-    </>
+    </main>
   );
 }

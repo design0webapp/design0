@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { editImage } from "@/lib/backend";
 import { EditNavbar } from "@/app/edit/navbar";
 import { EditCanvas } from "@/app/edit/canvas";
 import {
@@ -15,8 +14,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Loader2 } from "lucide-react";
 
 export const maxDuration = 60;
 
@@ -35,17 +40,16 @@ export default function EditPage({
   const [prompt, setPrompt] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editedImage, setEditedImage] = useState<string | null>(null);
-  const showEditedCard: boolean = isEditing || editedImage != null;
-  const editedCardRef = useRef<HTMLDivElement>(null);
+  const editedImageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (showEditedCard && editedCardRef.current) {
-      editedCardRef.current.scrollIntoView({
+    if (editedImage && editedImageRef.current) {
+      editedImageRef.current.scrollIntoView({
         behavior: "smooth",
-        block: "start",
+        block: "center",
       });
     }
-  }, [showEditedCard]);
+  }, [editedImage]);
 
   const reset = () => {
     setPolygons([]);
@@ -53,20 +57,10 @@ export default function EditPage({
   };
 
   return (
-    <>
+    <main className="min-h-screen flex flex-col">
       <EditNavbar />
-      <div
-        className={cn(
-          "p-2 lg:p-10 grid grid-cols-1 gap-4",
-          showEditedCard ? "lg:grid-cols-2" : "lg:grid-cols-1",
-        )}
-      >
-        <Card
-          className={cn(
-            "flex flex-col w-full",
-            showEditedCard ? "" : "lg:w-1/2 mx-auto",
-          )}
-        >
+      <div className="p-2 sm:p-4 md:p-6 lg:p-8 xl:p-10 flex-1 flex flex-col lg:flex-row gap-2 md:gap-4 xl:gap-8 items-center justify-center">
+        <Card>
           <CardHeader>
             <CardTitle>Original Image</CardTitle>
             <CardDescription>
@@ -96,12 +90,14 @@ export default function EditPage({
                   try {
                     setIsEditing(true);
                     setEditedImage(null);
-                    const resp = await editImage(
-                      searchParams.image,
-                      polygons,
-                      prompt,
-                    );
-                    setEditedImage(resp.url);
+                    // const resp = await editImage(
+                    //   searchParams.image,
+                    //   polygons,
+                    //   prompt,
+                    // );
+                    // setEditedImage(resp.url);
+                    await new Promise((resolve) => setTimeout(resolve, 6000));
+                    setEditedImage(searchParams.image);
                   } finally {
                     setIsEditing(false);
                   }
@@ -119,29 +115,37 @@ export default function EditPage({
           </CardFooter>
         </Card>
 
-        {showEditedCard && (
-          <Card className="flex flex-col" ref={editedCardRef}>
+        <Dialog open={isEditing}>
+          <DialogContent className="sm:max-w-[425px]" hideClose>
+            <DialogHeader>
+              <DialogTitle>Image Editing</DialogTitle>
+              <DialogDescription>Please waiting...</DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-center items-center p-4">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {editedImage && (
+          <Card className="bg-muted">
             <CardHeader>
               <CardTitle>Edited Image</CardTitle>
               <CardDescription>
                 The edited image will be displayed here.
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex-1">
-              {editedImage ? (
-                <img
-                  src={editedImage}
-                  className="w-full max-w-full"
-                  alt="edited image"
-                />
-              ) : (
-                <Skeleton className="h-full min-h-48" />
-              )}
+            <CardContent className="flex-1" ref={editedImageRef}>
+              <img
+                src={editedImage}
+                className="w-full max-w-full"
+                alt="edited image"
+              />
             </CardContent>
             <CardFooter></CardFooter>
           </Card>
         )}
       </div>
-    </>
+    </main>
   );
 }

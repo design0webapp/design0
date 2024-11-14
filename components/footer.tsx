@@ -6,8 +6,8 @@ import { Separator } from "@/components/ui/separator";
 
 export async function Footer() {
   return (
-    <footer className="bg-muted">
-      <div className="container px-4 py-8 md:py-12 text-muted-foreground">
+    <footer className="bg-muted border-t">
+      <div className="flex flex-col px-4 py-8 md:py-12 text-muted-foreground">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
@@ -20,8 +20,8 @@ export async function Footer() {
               Design with no pain. Create beautiful designs effortlessly.
             </p>
           </div>
-          <div>
-            <h3 className="font-semibold mb-4 text-foreground">Product</h3>
+          <div className="md:mx-auto">
+            <h4 className="font-semibold mb-4 text-foreground">Product</h4>
             <ul className="space-y-2">
               <li>
                 <Link
@@ -41,8 +41,8 @@ export async function Footer() {
               </li>
             </ul>
           </div>
-          <div>
-            <h3 className="font-semibold mb-4 text-foreground">Company</h3>
+          <div className="md:mx-auto">
+            <h4 className="font-semibold mb-4 text-foreground">Company</h4>
             <ul className="space-y-2">
               <li>
                 <Link
@@ -62,8 +62,8 @@ export async function Footer() {
               </li>
             </ul>
           </div>
-          <div>
-            <h3 className="font-semibold mb-4 text-foreground">Legal</h3>
+          <div className="md:mx-auto">
+            <h4 className="font-semibold mb-4 text-foreground">Legal</h4>
             <ul className="space-y-2">
               <li>
                 <Link
@@ -85,14 +85,20 @@ export async function Footer() {
           </div>
         </div>
         <Separator className="my-8" />
-        <div className="flex flex-col md:flex-row justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between md:items-center">
           <p className="text-sm">© 2024 Design0. All rights reserved.</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <Button variant="ghost" size="sm" asChild>
-              <Link href="https://twitter.com/design0">Twitter</Link>
+              <Link
+                href="https://x.com/design0webapp"
+                prefetch={false}
+                target="_blank"
+              >
+                Twitter
+              </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link href="https://instagram.com/design0">Github</Link>
+              <Link href="https://github.com/design0webapp">Github</Link>
             </Button>
           </div>
         </div>

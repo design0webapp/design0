@@ -35,7 +35,7 @@ export function CommonNavbar({ pageName }: { pageName: string | null }) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="px-4 flex h-14 items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center space-x-2">
           <Image
             src={"/logo.webp"}
             alt={"logo of design0"}
@@ -43,7 +43,7 @@ export function CommonNavbar({ pageName }: { pageName: string | null }) {
             height={32}
             className="w-9 h-9"
           />
-          <span className="text-lg font-semibold">
+          <span className="text-xl font-black">
             {pageName ? pageName : "Design0"}
           </span>
         </div>
@@ -100,7 +100,7 @@ export function CommonNavbar({ pageName }: { pageName: string | null }) {
           </Sheet>
           {isSignIn === null ? (
             <Button disabled={true} className="w-20">
-              <Loader2 />
+              <Loader2 className="animate-spin" />
             </Button>
           ) : isSignIn ? (
             <Button

@@ -22,6 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
+import { editImage } from "@/lib/backend";
 
 export const maxDuration = 60;
 
@@ -90,14 +91,14 @@ export default function EditPage({
                   try {
                     setIsEditing(true);
                     setEditedImage(null);
-                    // const resp = await editImage(
-                    //   searchParams.image,
-                    //   polygons,
-                    //   prompt,
-                    // );
-                    // setEditedImage(resp.url);
-                    await new Promise((resolve) => setTimeout(resolve, 6000));
-                    setEditedImage(searchParams.image);
+                    const resp = await editImage(
+                      searchParams.image,
+                      polygons,
+                      prompt,
+                    );
+                    setEditedImage(resp.url);
+                    // await new Promise((resolve) => setTimeout(resolve, 6000));
+                    // setEditedImage(searchParams.image);
                   } finally {
                     setIsEditing(false);
                   }

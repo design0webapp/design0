@@ -17,7 +17,7 @@ export async function Footer() {
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Design with no pain. Create beautiful designs effortlessly.
+              Effortless Design for Everyone.
             </p>
           </div>
           <div className="md:mx-auto">
@@ -67,7 +67,7 @@ export async function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/terms"
+                  href="/terms-of-service"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   Terms of Service
@@ -75,7 +75,7 @@ export async function Footer() {
               </li>
               <li>
                 <Link
-                  href="/privacy"
+                  href="/privacy-policy"
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   Privacy Policy

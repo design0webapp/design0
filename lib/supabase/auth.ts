@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getURL } from "@/lib/helpers";
 
-export async function signin(email: string, password: string) {
+export async function signIn(email: string, password: string) {
   "use server";
 
   const supabase = createClient();
@@ -22,7 +22,7 @@ export async function signin(email: string, password: string) {
   };
 }
 
-export async function signup(email: string, password: string) {
+export async function signUp(email: string, password: string) {
   "use server";
 
   const callbackURL = getURL("/auth/callback");
@@ -46,7 +46,7 @@ export async function signup(email: string, password: string) {
   };
 }
 
-export async function signout() {
+export async function signOut() {
   "use server";
 
   const supabase = createClient();

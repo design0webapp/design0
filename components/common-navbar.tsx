@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
-import { getUser, signout } from "@/lib/supabase/auth";
+import { getUser, signOut } from "@/lib/supabase/auth";
 import { useToast } from "@/hooks/use-toast";
 
 export function CommonNavbar({ pageName }: { pageName: string | null }) {
@@ -77,7 +77,7 @@ export function CommonNavbar({ pageName }: { pageName: string | null }) {
         <div className="flex items-center gap-2">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon">
+              <Button variant="outline" size="icon" className="md:hidden">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
@@ -106,7 +106,7 @@ export function CommonNavbar({ pageName }: { pageName: string | null }) {
             <Button
               className="w-20"
               onClick={async () => {
-                const { error } = await signout();
+                const { error } = await signOut();
                 if (error) {
                   toast({
                     title: "Error",

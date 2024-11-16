@@ -4,10 +4,13 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signin, signup } from "@/lib/supabase/auth";
+import { signIn, signUp } from "@/lib/supabase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { CommonNavbar } from "@/components/common-navbar";
+import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
+import { signInByGoogle } from "@/lib/supabase/oauth";
 
 export default function AuthPage() {
   const [isSignIn, setIsSignIn] = useState(true);
@@ -21,7 +24,7 @@ export default function AuthPage() {
     e.preventDefault();
     if (isSignIn) {
       // Handle signin logic here
-      const { error } = await signin(email, password);
+      const { error } = await signIn(email, password);
       if (error) {
         toast({
           title: "Error",
@@ -44,7 +47,7 @@ export default function AuthPage() {
           variant: "destructive",
         });
       }
-      const { error } = await signup(email, password);
+      const { error } = await signUp(email, password);
       if (error) {
         toast({
           title: "Error",
@@ -61,11 +64,6 @@ export default function AuthPage() {
       }
     }
   };
-
-  // const handleGoogleAuth = () => {
-  //   // Handle Google authentication logic here
-  //   console.log(`Google ${isSignIn ? "signin" : "signup"} attempted`);
-  // };
 
   const toggleAuthMode = () => {
     setIsSignIn(!isSignIn);
@@ -130,26 +128,35 @@ export default function AuthPage() {
                 : "Already have an account? Log in"}
             </button>
           </div>
-          {isSignIn && (
-            <div className="mt-4 text-center">
-              <a
-                href="/forgot-password"
-                className="text-sm text-blue-600 hover:underline"
-              >
-                Forgot password?
-              </a>
-            </div>
-          )}
-          {/*<div className="mt-6">*/}
-          {/*  <Separator className="my-4" />*/}
-          {/*  <Button*/}
-          {/*    variant="outline"*/}
-          {/*    className="w-full"*/}
-          {/*    onClick={handleGoogleAuth}*/}
-          {/*  >*/}
-          {/*    {isSignIn ? "Sign in" : "Sign up"} with Google*/}
-          {/*  </Button>*/}
-          {/*</div>*/}
+          {/*{isSignIn && (*/}
+          {/*  <div className="mt-4 text-center">*/}
+          {/*    <a*/}
+          {/*      href="/forgot-password"*/}
+          {/*      className="text-sm text-blue-600 hover:underline"*/}
+          {/*    >*/}
+          {/*      Forgot password?*/}
+          {/*    </a>*/}
+          {/*  </div>*/}
+          {/*)}*/}
+          <div className="mt-6">
+            <Separator className="my-4" />
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={async () => {
+                await signInByGoogle();
+              }}
+            >
+              <Image
+                alt="google login"
+                src="/auth/google.svg"
+                width={32}
+                height={32}
+                className="w-6 h-6 mr-2"
+              />
+              {isSignIn ? "Sign in" : "Sign up"} with Google
+            </Button>
+          </div>
         </div>
       </div>
     </main>

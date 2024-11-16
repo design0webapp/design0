@@ -68,7 +68,7 @@ export default function EditPage({
               Drag and drop areas you want to edit.
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex-1">
+          <CardContent>
             <EditCanvas
               sourceImage={searchParams.image}
               polygons={polygons}

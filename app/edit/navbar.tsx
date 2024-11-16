@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getUser } from "@/lib/store/user";
 import { Tables } from "@/types_db";
 import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
 
 export function EditNavbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,6 +26,7 @@ export function EditNavbar() {
   const [user, setUser] = useState<Tables<"users"> | null>(null);
 
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     getAuthUser().then((ret) => {
@@ -104,7 +106,10 @@ export function EditNavbar() {
                           variant: "destructive",
                         });
                       }
-                      window.location.reload();
+                      setIsOpen(false);
+                      setIsSignIn(false);
+                      setUser(null);
+                      router.push("/");
                     }}
                   >
                     Sign Out

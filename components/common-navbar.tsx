@@ -16,12 +16,14 @@ import Image from "next/image";
 import { getAuthUser, signOut } from "@/lib/supabase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
 
 export function CommonNavbar({ pageName }: { pageName: string | null }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSignIn, setIsSignIn] = useState<boolean | null>(null);
 
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     getAuthUser().then((ret) => {
@@ -112,7 +114,8 @@ export function CommonNavbar({ pageName }: { pageName: string | null }) {
                           variant: "destructive",
                         });
                       }
-                      window.location.reload();
+                      setIsSignIn(false);
+                      router.refresh();
                     }}
                   >
                     Sign Out
@@ -137,8 +140,8 @@ export function CommonNavbar({ pageName }: { pageName: string | null }) {
                     variant: "destructive",
                   });
                 }
-                // reload page
-                window.location.reload();
+                setIsSignIn(false);
+                router.refresh();
               }}
             >
               Sign Out

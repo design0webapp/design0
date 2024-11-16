@@ -21,7 +21,7 @@ export async function Footer() {
             </p>
           </div>
           <div className="md:mx-auto">
-            <h4 className="font-semibold mb-4 text-foreground">Product</h4>
+            <p className="font-semibold mb-4 text-foreground">Product</p>
             <ul className="space-y-2">
               <li>
                 <Link
@@ -42,7 +42,7 @@ export async function Footer() {
             </ul>
           </div>
           <div className="md:mx-auto">
-            <h4 className="font-semibold mb-4 text-foreground">Company</h4>
+            <p className="font-semibold mb-4 text-foreground">Company</p>
             <ul className="space-y-2">
               <li>
                 <Link
@@ -63,7 +63,7 @@ export async function Footer() {
             </ul>
           </div>
           <div className="md:mx-auto">
-            <h4 className="font-semibold mb-4 text-foreground">Legal</h4>
+            <p className="font-semibold mb-4 text-foreground">Legal</p>
             <ul className="space-y-2">
               <li>
                 <Link

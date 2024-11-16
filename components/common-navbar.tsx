@@ -112,13 +112,13 @@ export function CommonNavbar({ pageName }: { pageName: string | null }) {
                           variant: "destructive",
                         });
                       }
-                      setIsSignIn(false);
+                      window.location.reload();
                     }}
                   >
                     Sign Out
                   </Button>
                 ) : (
-                  <Button className="w-full">
+                  <Button className="w-full" asChild>
                     <Link href="/signin">Sign In</Link>
                   </Button>
                 )}
@@ -137,13 +137,14 @@ export function CommonNavbar({ pageName }: { pageName: string | null }) {
                     variant: "destructive",
                   });
                 }
-                setIsSignIn(false);
+                // reload page
+                window.location.reload();
               }}
             >
               Sign Out
             </Button>
           ) : (
-            <Button className="w-18">
+            <Button className="w-18" asChild>
               <Link href="/signin">Sign In</Link>
             </Button>
           )}

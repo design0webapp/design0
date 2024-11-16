@@ -16,17 +16,7 @@ export async function GET(request: NextRequest) {
         `${requestUrl.origin}/signin?error=${error.message}`,
       );
     }
-
-    if (data.user) {
-      const user = data.user;
-      const { error } = await supabase.from("users").insert({
-        id: user.id,
-        email: user.email,
-      });
-      if (error) {
-        console.log(error);
-      }
-    }
+    console.log("auth callback new user:", data.user);
   }
 
   // URL to redirect to after sign in process completes

@@ -34,6 +34,8 @@ export function EditNavbar() {
         setIsSignIn(false);
       }
     });
+  }, []);
+  useEffect(() => {
     if (isSignIn) {
       getUser().then((ret) => {
         setUser(ret.data);
@@ -102,13 +104,17 @@ export function EditNavbar() {
                           variant: "destructive",
                         });
                       }
-                      setIsSignIn(false);
+                      window.location.reload();
                     }}
                   >
                     Sign Out
                   </Button>
                 ) : (
-                  <Button className="w-full">
+                  <Button
+                    className="w-full"
+                    onClick={() => setIsOpen(false)}
+                    asChild
+                  >
                     <Link href="/signin">Sign In</Link>
                   </Button>
                 )}
@@ -116,17 +122,21 @@ export function EditNavbar() {
             </SheetContent>
           </Sheet>
           {isSignIn ? (
-            <Button className="w-18">
-              <BadgeCent className="w-6 h-6" />
-              {user ? (
-                user.credit
-              ) : (
-                <Loader2 className="w-6 h-6 animate-spin" />
-              )}
+            <Button className="w-18" asChild>
+              <Link href="/pricing" className="flex gap-2 items-center">
+                <BadgeCent className="w-6 h-6" />
+                {user ? (
+                  user.credit
+                ) : (
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                )}
+              </Link>
             </Button>
           ) : (
-            <Button className="w-18">
-              <Link href="/signin">Sign In</Link>
+            <Button className="w-18" asChild>
+              <Link href="/signin" target="_blank">
+                Sign In
+              </Link>
             </Button>
           )}
         </div>

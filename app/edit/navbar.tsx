@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Menu } from "lucide-react";
+import { BadgeCent, Loader2, Menu } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -13,24 +13,33 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
-import { getUser, signOut } from "@/lib/supabase/auth";
+import { getAuthUser, signOut } from "@/lib/supabase/auth";
 import { useToast } from "@/hooks/use-toast";
+import { getUser } from "@/lib/store/user";
+import { Tables } from "@/types_db";
+import { Separator } from "@/components/ui/separator";
 
 export function EditNavbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isSignIn, setIsSignIn] = useState<boolean | null>(null);
+  const [isSignIn, setIsSignIn] = useState<boolean>(false);
+  const [user, setUser] = useState<Tables<"users"> | null>(null);
 
   const { toast } = useToast();
 
   useEffect(() => {
-    getUser().then((ret) => {
+    getAuthUser().then((ret) => {
       if (ret.data) {
         setIsSignIn(true);
       } else {
         setIsSignIn(false);
       }
     });
-  }, []);
+    if (isSignIn) {
+      getUser().then((ret) => {
+        setUser(ret.data);
+      });
+    }
+  }, [isSignIn]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -76,35 +85,47 @@ export function EditNavbar() {
                 <Link href="/" onClick={() => setIsOpen(false)}>
                   Home
                 </Link>
+                <Separator className="my-2" />
                 <Link href="/mydesigns" onClick={() => setIsOpen(false)}>
                   My Designs
                 </Link>
+                <Separator className="my-2" />
+                {isSignIn ? (
+                  <Button
+                    className="w-full"
+                    onClick={async () => {
+                      const { error } = await signOut();
+                      if (error) {
+                        toast({
+                          title: "Error",
+                          description: error,
+                          variant: "destructive",
+                        });
+                      }
+                      setIsSignIn(false);
+                    }}
+                  >
+                    Sign Out
+                  </Button>
+                ) : (
+                  <Button className="w-full">
+                    <Link href="/signin">Sign In</Link>
+                  </Button>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
-          {isSignIn === null ? (
-            <Button disabled={true} className="w-20">
-              <Loader2 className="animate-spin" />
-            </Button>
-          ) : isSignIn ? (
-            <Button
-              className="w-20"
-              onClick={async () => {
-                const { error } = await signOut();
-                if (error) {
-                  toast({
-                    title: "Error",
-                    description: error,
-                    variant: "destructive",
-                  });
-                }
-                setIsSignIn(false);
-              }}
-            >
-              Sign Out
+          {isSignIn ? (
+            <Button className="w-18">
+              <BadgeCent className="w-6 h-6" />
+              {user ? (
+                user.credit
+              ) : (
+                <Loader2 className="w-6 h-6 animate-spin" />
+              )}
             </Button>
           ) : (
-            <Button className="w-20">
+            <Button className="w-18">
               <Link href="/signin">Sign In</Link>
             </Button>
           )}

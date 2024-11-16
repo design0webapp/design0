@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
-import { getUser, signOut } from "@/lib/supabase/auth";
+import { getAuthUser, signOut } from "@/lib/supabase/auth";
 import { useToast } from "@/hooks/use-toast";
+import { Separator } from "@/components/ui/separator";
 
 export function CommonNavbar({ pageName }: { pageName: string | null }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,7 +24,7 @@ export function CommonNavbar({ pageName }: { pageName: string | null }) {
   const { toast } = useToast();
 
   useEffect(() => {
-    getUser().then((ret) => {
+    getAuthUser().then((ret) => {
       if (ret.data) {
         setIsSignIn(true);
       } else {
@@ -85,9 +86,12 @@ export function CommonNavbar({ pageName }: { pageName: string | null }) {
             <SheetContent side="right">
               <nav className="flex flex-col gap-4">
                 {pageName != null && (
-                  <Link href="/" onClick={() => setIsOpen(false)}>
-                    Home
-                  </Link>
+                  <>
+                    <Link href="/" onClick={() => setIsOpen(false)}>
+                      Home
+                    </Link>
+                    <Separator className="my-2" />
+                  </>
                 )}
                 <Link href="/features" onClick={() => setIsOpen(false)}>
                   Features
@@ -95,32 +99,34 @@ export function CommonNavbar({ pageName }: { pageName: string | null }) {
                 <Link href="/pricing" onClick={() => setIsOpen(false)}>
                   Pricing
                 </Link>
+                <Separator className="my-2" />
+                {isSignIn ? (
+                  <Button
+                    className="w-full"
+                    onClick={async () => {
+                      const { error } = await signOut();
+                      if (error) {
+                        toast({
+                          title: "Error",
+                          description: error,
+                          variant: "destructive",
+                        });
+                      }
+                      setIsSignIn(false);
+                    }}
+                  >
+                    Sign Out
+                  </Button>
+                ) : (
+                  <Button className="w-full">
+                    <Link href="/signin">Sign In</Link>
+                  </Button>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
-          {isSignIn === null ? (
-            <Button disabled={true} className="w-20">
-              <Loader2 className="animate-spin" />
-            </Button>
-          ) : isSignIn ? (
-            <Button
-              className="w-20"
-              onClick={async () => {
-                const { error } = await signOut();
-                if (error) {
-                  toast({
-                    title: "Error",
-                    description: error,
-                    variant: "destructive",
-                  });
-                }
-                setIsSignIn(false);
-              }}
-            >
-              Sign Out
-            </Button>
-          ) : (
-            <Button className="w-20">
+          {!isSignIn && (
+            <Button className="w-18">
               <Link href="/signin">Sign In</Link>
             </Button>
           )}

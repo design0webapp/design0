@@ -61,7 +61,7 @@ export async function signOut() {
   };
 }
 
-export async function getUser() {
+export async function getAuthUser() {
   "use server";
 
   const supabase = createClient();

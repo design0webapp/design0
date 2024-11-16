@@ -125,7 +125,24 @@ export function CommonNavbar({ pageName }: { pageName: string | null }) {
               </nav>
             </SheetContent>
           </Sheet>
-          {!isSignIn && (
+          {isSignIn ? (
+            <Button
+              className="w-18"
+              onClick={async () => {
+                const { error } = await signOut();
+                if (error) {
+                  toast({
+                    title: "Error",
+                    description: error,
+                    variant: "destructive",
+                  });
+                }
+                setIsSignIn(false);
+              }}
+            >
+              Sign Out
+            </Button>
+          ) : (
             <Button className="w-18">
               <Link href="/signin">Sign In</Link>
             </Button>

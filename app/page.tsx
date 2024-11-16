@@ -1,7 +1,7 @@
 import Search from "@/components/search";
-import { fetchImages } from "@/lib/backend";
 import ImageCard from "@/components/image-card";
 import { CommonNavbar } from "@/components/common-navbar";
+import { listPhotos, searchPhotos } from "@/lib/unsplash";
 
 export const revalidate = 60;
 
@@ -12,7 +12,9 @@ export default async function HomePage({
     query: string | undefined;
   };
 }) {
-  const images = await fetchImages(searchParams.query);
+  const photos = searchParams.query
+    ? await searchPhotos(searchParams.query, 1, 12)
+    : await listPhotos(1, 12);
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center">
@@ -24,8 +26,8 @@ export default async function HomePage({
         </h2>
         <Search query={searchParams.query} />
         <div className="mt-10 columns-1 sm:columns-2 lg:columns-3 gap-3">
-          {images.images.map((image) => (
-            <ImageCard key={image.id} image={image} />
+          {photos.map((photo) => (
+            <ImageCard key={photo.id} photo={photo} />
           ))}
         </div>
       </div>

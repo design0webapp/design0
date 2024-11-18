@@ -40,7 +40,11 @@ export function EditNavbar() {
   useEffect(() => {
     if (isSignIn) {
       getUser().then((ret) => {
-        setUser(ret.data);
+        if (ret.data) {
+          setUser(ret.data);
+        } else {
+          console.log(ret.error);
+        }
       });
     }
   }, [isSignIn]);

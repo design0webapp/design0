@@ -34,20 +34,77 @@ export type Database = {
   }
   public: {
     Tables: {
+      checkouts: {
+        Row: {
+          created_at: string
+          credit: number
+          id: string
+          is_completed: boolean
+          price_id: string
+          quantity: number
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credit: number
+          id?: string
+          is_completed?: boolean
+          price_id: string
+          quantity: number
+          session_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          credit?: number
+          id?: string
+          is_completed?: boolean
+          price_id?: string
+          quantity?: number
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      customers: {
+        Row: {
+          created_at: string
+          customer_id: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           created_at: string
-          credit: number | null
+          credit: number
+          email: string | null
           id: string
         }
         Insert: {
           created_at?: string
-          credit?: number | null
+          credit?: number
+          email?: string | null
           id: string
         }
         Update: {
           created_at?: string
-          credit?: number | null
+          credit?: number
+          email?: string | null
           id?: string
         }
         Relationships: []

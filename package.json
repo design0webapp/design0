@@ -16,6 +16,7 @@
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.2",
+    "@stripe/stripe-js": "^4.10.0",
     "@supabase/ssr": "^0.5.1",
     "@supabase/supabase-js": "^2.46.1",
     "class-variance-authority": "^0.7.0",
@@ -24,6 +25,7 @@
     "next": "14.2.16",
     "react": "^18",
     "react-dom": "^18",
+    "stripe": "^17.3.1",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7"
   },

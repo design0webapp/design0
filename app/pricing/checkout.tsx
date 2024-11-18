@@ -7,15 +7,22 @@ import { Input } from "@/components/ui/input";
 import { Tables } from "@/types_db";
 import { getUser } from "@/lib/store/user";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 export function Checkout() {
   const [quantity, setQuantity] = useState<number>(1);
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<Tables<"users"> | null>(null);
 
+  const { toast } = useToast();
+
   useEffect(() => {
     getUser().then((ret) => {
-      setUser(ret.data);
+      if (ret.data) {
+        setUser(ret.data);
+      } else {
+        console.log(ret.error);
+      }
     });
   }, []);
 
@@ -45,9 +52,39 @@ export function Checkout() {
           disabled={isLoading || !user}
           onClick={async () => {
             setIsLoading(true);
-            setTimeout(() => {
+            try {
+              if (!user) {
+                toast({
+                  title: "Error",
+                  description: "You are not signed in.",
+                  variant: "destructive",
+                });
+                return;
+              }
+              // create checkout session
+              const sessionId = await (
+                await import("@/lib/stripe/checkout")
+              ).checkoutWithStripe(
+                {
+                  id: user.id,
+                  email: user.email!,
+                },
+                quantity,
+              );
+              const stripe = await (
+                await import("@/lib/stripe/client")
+              ).getStripe();
+              stripe?.redirectToCheckout({ sessionId });
+            } catch (error) {
+              console.log(error);
+              toast({
+                title: "Error",
+                description: "Something went wrong.",
+                variant: "destructive",
+              });
+            } finally {
               setIsLoading(false);
-            }, 5000);
+            }
           }}
         >
           {isLoading ? (

@@ -21,7 +21,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
+import { BadgeCent, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import Link from "next/link";
 import { editImage } from "@/lib/backend";
 
 export const maxDuration = 60;
@@ -43,6 +46,8 @@ export default function EditPage({
   const [editedImage, setEditedImage] = useState<string | null>(null);
   const editedImageRef = useRef<HTMLDivElement>(null);
 
+  const { toast } = useToast();
+
   useEffect(() => {
     if (editedImage && editedImageRef.current) {
       editedImageRef.current.scrollIntoView({
@@ -55,6 +60,60 @@ export default function EditPage({
   const reset = () => {
     setPolygons([]);
     setPrompt("");
+    setEditedImage(null);
+  };
+
+  const edit = async () => {
+    try {
+      setIsEditing(true);
+      const { url, error } = await editImage(
+        searchParams.image,
+        polygons,
+        prompt,
+      );
+      if (error) {
+        console.log(error);
+        if (error === "user not found") {
+          toast({
+            title: "You need to sign in first!",
+            description: "Please sign in to continue.",
+            variant: "destructive",
+            action: (
+              <ToastAction altText="Goto Sign In">
+                <Link href={"/signin"} target="_blank">
+                  Sign In
+                </Link>
+              </ToastAction>
+            ),
+          });
+          return;
+        }
+        if (error === "not enough credits") {
+          toast({
+            title: "Not enough credits",
+            description: "Please recharge credits to continue.",
+            variant: "destructive",
+            action: (
+              <ToastAction altText="Goto Pricing">
+                <Link href={"/pricing"} target="_blank">
+                  Recharge
+                </Link>
+              </ToastAction>
+            ),
+          });
+          return;
+        }
+        toast({
+          title: "Failed to edit image",
+          description: error,
+          variant: "destructive",
+        });
+        return;
+      }
+      setEditedImage(url!);
+    } finally {
+      setIsEditing(false);
+    }
   };
 
   return (
@@ -87,27 +146,21 @@ export default function EditPage({
             />
             <div className="mt-6 flex space-x-2">
               <Button
-                onClick={async () => {
-                  try {
-                    setIsEditing(true);
-                    setEditedImage(null);
-                    const resp = await editImage(
-                      searchParams.image,
-                      polygons,
-                      prompt,
-                    );
-                    setEditedImage(resp.url);
-                    // await new Promise((resolve) => setTimeout(resolve, 6000));
-                    // setEditedImage(searchParams.image);
-                  } finally {
-                    setIsEditing(false);
-                  }
-                }}
+                onClick={edit}
                 disabled={
                   polygons.length === 0 || prompt.trim() === "" || isEditing
                 }
+                className="w-[10rem]"
               >
-                {isEditing ? "Editing..." : "Edit Image"}
+                {isEditing ? (
+                  "Editing..."
+                ) : (
+                  <div className="flex items-center justify-center gap-1">
+                    <span>Edit Image (</span>
+                    <BadgeCent className="w-4 h-4" />
+                    <span>2 )</span>
+                  </div>
+                )}
               </Button>
               <Button variant={"outline"} onClick={reset}>
                 Reset

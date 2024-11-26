@@ -12,7 +12,15 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Design0",
-  description: "",
+  description: "Effortless Design for Everyone.",
+  authors: [{ name: "Hantian Pang", url: "https://github.com/ppaanngggg" }],
+  creator: "Hantian Pang",
+  publisher: "Hantian Pang",
+  robots: "follow, index",
+  icons: { icon: "/favicon.ico" },
+  verification: {
+    google: process.env.GOOGLE_VERIFICATION,
+  },
 };
 
 export default function RootLayout({

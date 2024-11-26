@@ -18,6 +18,17 @@ import {
 import React, { Suspense } from "react";
 import { Checkout } from "@/app/pricing/checkout";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Metadata } from "next";
+import { getURL } from "@/lib/helpers";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const url = getURL("/pricing");
+  return {
+    alternates: {
+      canonical: url,
+    },
+  };
+}
 
 export default async function PricingPage() {
   return (

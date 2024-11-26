@@ -2,8 +2,19 @@ import Search from "@/components/search";
 import ImageCard from "@/components/image-card";
 import { CommonNavbar } from "@/components/common-navbar";
 import { listPhotos, searchPhotos } from "@/lib/unsplash";
+import { Metadata } from "next";
+import { getURL } from "@/lib/helpers";
 
 export const revalidate = 60;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const url = getURL();
+  return {
+    alternates: {
+      canonical: url,
+    },
+  };
+}
 
 export default async function HomePage({
   searchParams,

@@ -1,68 +1,46 @@
 "use server";
 
-const UNSPLASH_URL = "https://api.unsplash.com/";
+import { createApi } from "unsplash-js";
+import { Basic } from "unsplash-js/src/methods/photos/types";
 
-export interface Photo {
-  id: string;
-  slug: string;
-  description: string | null;
-  alt_description: string | null;
-  urls: {
-    raw: string;
-    full: string;
-    regular: string;
-    small: string;
-    thumb: string;
-  };
-  user: {
-    id: string;
-    username: string;
-    name: string;
-    bio: string | null;
-    profile_image: {
-      small: string;
-      medium: string;
-      large: string;
-    };
-  };
+const unsplash = createApi({
+  accessKey: process.env.UNSPLASH_ACCESS_KEY!,
+});
+
+export async function trackDownload(url: string) {
+  await unsplash.photos.trackDownload({
+    downloadLocation: url,
+  });
 }
 
 export async function listPhotos(
   page: number,
-  per_page: number,
-): Promise<Photo[]> {
-  const resp = await fetch(
-    `${UNSPLASH_URL}/photos?page=${page}&per_page=${per_page}`,
-    {
-      headers: {
-        Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
-      },
-    },
-  );
+  perPage: number,
+): Promise<Basic[]> {
+  const resp = await unsplash.photos.list({
+    page,
+    perPage,
+  });
   if (resp.status != 200) {
-    console.error(resp.status, await resp.text());
+    console.error(resp.status, resp.type);
     throw new Error("Failed to list photos");
   }
-  return await resp.json();
+  return resp.response?.results ?? [];
 }
 
 export async function searchPhotos(
   query: string,
   page: number,
-  per_page: number,
-): Promise<Photo[]> {
-  const resp = await fetch(
-    `${UNSPLASH_URL}/search/photos?query=${encodeURI(query)}&page=${page}&per_page=${per_page}`,
-    {
-      headers: {
-        Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
-      },
-    },
-  );
+  perPage: number,
+): Promise<Basic[]> {
+  const resp = await unsplash.search.getPhotos({
+    query,
+    page,
+    perPage,
+  });
   if (resp.status != 200) {
-    console.error(resp.status, await resp.text());
+    console.error(resp.status, resp.type);
     throw new Error("Failed to search photos");
   }
-  const data = await resp.json();
-  return data.results;
+  return resp.response?.results ?? [];
 }

@@ -17,7 +17,10 @@ export default function ImageCard({ photo }: { photo: Basic }) {
       <img
         src={photo.urls.small}
         alt={photo.alt_description || ""}
-        className="rounded-lg"
+        className="rounded-lg bg-muted object-cover"
+        width={400}
+        height={(400 / photo.width) * photo.height}
+        loading="lazy"
       />
       <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/30 backdrop-blur-sm rounded-b-lg">
         <div className="text-xs text-white">

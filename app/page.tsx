@@ -24,8 +24,8 @@ export default async function HomePage({
   };
 }) {
   const photos = searchParams.query
-    ? await searchPhotos(searchParams.query, 1, 12)
-    : await listPhotos(1, 12);
+    ? await searchPhotos(searchParams.query, 1, 24)
+    : await listPhotos(1, 24);
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center">

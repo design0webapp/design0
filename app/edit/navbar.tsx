@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCent, Loader2, Menu } from "lucide-react";
+import { BadgeCent, Loader2, Menu, Minus, Plus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -20,39 +20,55 @@ import { Tables } from "@/types_db";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 
-export function EditNavbar() {
+export function EditNavbar({
+  widthSize,
+  setWidthSize,
+}: {
+  widthSize: "full" | "mid" | "mini";
+  setWidthSize: (value: "full" | "mid" | "mini") => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSignIn, setIsSignIn] = useState<boolean>(false);
   const [user, setUser] = useState<Tables<"users"> | null>(null);
-
   const { toast } = useToast();
   const router = useRouter();
 
-  useEffect(() => {
-    getAuthUser().then((ret) => {
-      if (ret.data) {
-        setIsSignIn(true);
+  const checkAuthAndFetchUser = async () => {
+    const authRet = await getAuthUser();
+    if (authRet.data) {
+      setIsSignIn(true);
+      const userRet = await getUser();
+      if (userRet.data) {
+        setUser(userRet.data);
       } else {
-        setIsSignIn(false);
+        console.log(userRet.error);
       }
-    });
-  }, []);
-  useEffect(() => {
-    if (isSignIn) {
-      getUser().then((ret) => {
-        if (ret.data) {
-          setUser(ret.data);
-        } else {
-          console.log(ret.error);
-        }
-      });
+    } else {
+      setIsSignIn(false);
+      setUser(null);
     }
-  }, [isSignIn]);
+  };
+
+  useEffect(() => {
+    checkAuthAndFetchUser();
+    const interval = setInterval(checkAuthAndFetchUser, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleSizeChange = (direction: "increase" | "decrease") => {
+    const sizes: ("full" | "mid" | "mini")[] = ["full", "mid", "mini"];
+    const currentIndex = sizes.indexOf(widthSize);
+    if (direction === "increase" && currentIndex > 0) {
+      setWidthSize(sizes[currentIndex - 1]);
+    } else if (direction === "decrease" && currentIndex < sizes.length - 1) {
+      setWidthSize(sizes[currentIndex + 1]);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="px-4 flex h-14 items-center justify-between">
-        <div className="flex items-center space-x-2">
+      <div className="px-4 flex h-14 items-center">
+        <div className="flex items-center space-x-2 w-1/3">
           <Image
             src={"/logo.webp"}
             alt={"logo of design0"}
@@ -62,25 +78,52 @@ export function EditNavbar() {
           />
           <span className="text-xl font-black">Edit</span>
         </div>
-        <NavigationMenu className="hidden md:flex">
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <Link href="/" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Home
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/mydesigns" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  My Designs
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-        <div className="flex items-center gap-2">
+
+        <div className="flex items-center justify-center w-1/3">
+          <div className="hidden sm:flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => handleSizeChange("increase")}
+              disabled={widthSize === "full"}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+
+            <div className="min-w-[4rem] text-center">
+              {widthSize.toUpperCase()}
+            </div>
+
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => handleSizeChange("decrease")}
+              disabled={widthSize === "mini"}
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 justify-end w-1/3">
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <Link href="/" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                    Home
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/mydesigns" legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                    My Designs
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="md:hidden">

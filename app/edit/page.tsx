@@ -26,6 +26,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import Link from "next/link";
 import { editImage } from "@/lib/backend";
+import { cn } from "@/lib/utils";
 
 export const maxDuration = 60;
 
@@ -36,9 +37,21 @@ export default function EditPage({
     image: string;
   };
 }) {
-  if (searchParams.image == undefined) {
+  if (!searchParams.image) {
     redirect("/");
   }
+
+  const [widthSize, setWidthSize] = useState<"full" | "mid" | "mini">("full");
+  const getContainerWidth = (size: "full" | "mid" | "mini") => {
+    switch (size) {
+      case "full":
+        return "max-w-full";
+      case "mid":
+        return "w-1/2";
+      case "mini":
+        return "w-1/3";
+    }
+  };
 
   const [polygons, setPolygons] = useState<number[][][]>([]);
   const [prompt, setPrompt] = useState("");
@@ -118,9 +131,15 @@ export default function EditPage({
 
   return (
     <main className="min-h-screen flex flex-col">
-      <EditNavbar />
-      <div className="p-2 sm:p-4 md:p-6 lg:p-8 xl:p-10 flex-1 flex flex-col lg:flex-row gap-2 md:gap-4 xl:gap-8 items-center justify-center">
-        <Card>
+      <EditNavbar widthSize={widthSize} setWidthSize={setWidthSize} />
+      <div
+        className={cn(
+          "p-2 sm:p-4 md:p-6 lg:p-8 xl:p-10",
+          "flex-1 flex flex-col md:flex-row gap-2 md:gap-4 xl:gap-8",
+          "items-center md:items-stretch justify-center",
+        )}
+      >
+        <Card className={cn(getContainerWidth(widthSize), "h-full")}>
           <CardHeader>
             <CardTitle>Original Image</CardTitle>
             <CardDescription>
@@ -144,7 +163,7 @@ export default function EditPage({
                 setPrompt(event.currentTarget.value);
               }}
             />
-            <div className="mt-6 flex space-x-2">
+            <div className="mt-6 flex flex-wrap gap-2">
               <Button
                 onClick={edit}
                 disabled={
@@ -169,20 +188,8 @@ export default function EditPage({
           </CardFooter>
         </Card>
 
-        <Dialog open={isEditing}>
-          <DialogContent className="sm:max-w-[425px]" hideClose>
-            <DialogHeader>
-              <DialogTitle>Image Editing</DialogTitle>
-              <DialogDescription>Please waiting...</DialogDescription>
-            </DialogHeader>
-            <div className="flex justify-center items-center p-4">
-              <Loader2 className="h-8 w-8 animate-spin" />
-            </div>
-          </DialogContent>
-        </Dialog>
-
         {editedImage && (
-          <Card className="bg-muted">
+          <Card className={cn(getContainerWidth(widthSize), "bg-muted h-full")}>
             <CardHeader>
               <CardTitle>Edited Image</CardTitle>
               <CardDescription>
@@ -200,6 +207,17 @@ export default function EditPage({
           </Card>
         )}
       </div>
+      <Dialog open={isEditing}>
+        <DialogContent className="sm:max-w-[425px]" hideClose>
+          <DialogHeader>
+            <DialogTitle>Image Editing</DialogTitle>
+            <DialogDescription>Please waiting...</DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center items-center p-4">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

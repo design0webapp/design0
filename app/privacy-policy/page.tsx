@@ -1,4 +1,15 @@
 import { CommonNavbar } from "@/components/common-navbar";
+import { Metadata } from "next";
+import { getURL } from "@/lib/helpers";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const url = getURL("/privacy-policy");
+  return {
+    alternates: {
+      canonical: url,
+    },
+  };
+}
 
 export default async function PrivacyPolicyPage() {
   return (

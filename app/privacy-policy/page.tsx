@@ -5,6 +5,8 @@ import { getURL } from "@/lib/helpers";
 export async function generateMetadata(): Promise<Metadata> {
   const url = getURL("/privacy-policy");
   return {
+    title: "Privacy Policy - Design0",
+    description: "Privacy Policy for Design0.",
     alternates: {
       canonical: url,
     },

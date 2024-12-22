@@ -9,8 +9,8 @@ export default function ImageCard({ photo }: { photo: Basic }) {
   return (
     <div
       className="mb-3 rounded-lg shadow-xl cursor-pointer hover:scale-105 transition-all relative"
-      onClick={async () => {
-        await trackDownload(photo.links.download_location);
+      onClick={() => {
+        trackDownload(photo.links.download_location);
         router.push(`/edit?image=${encodeURIComponent(photo.urls.regular)}`);
       }}
     >

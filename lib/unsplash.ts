@@ -8,6 +8,7 @@ const unsplash = createApi({
 });
 
 export async function trackDownload(url: string) {
+  console.log("tracking download", url);
   await unsplash.photos.trackDownload({
     downloadLocation: url,
   });

@@ -5,6 +5,8 @@ import { getURL } from "@/lib/helpers";
 export async function generateMetadata(): Promise<Metadata> {
   const url = getURL("/terms-of-service");
   return {
+    title: "Terms of Service - Design0",
+    description: "Terms of Service for Design0.",
     alternates: {
       canonical: url,
     },

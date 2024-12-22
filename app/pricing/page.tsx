@@ -24,6 +24,8 @@ import { getURL } from "@/lib/helpers";
 export async function generateMetadata(): Promise<Metadata> {
   const url = getURL("/pricing");
   return {
+    title: "Pricing - Design0",
+    description: "Pricing and Credits.",
     alternates: {
       canonical: url,
     },

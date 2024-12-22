@@ -29,6 +29,9 @@ import { getURL } from "@/lib/helpers";
 export async function generateMetadata(): Promise<Metadata> {
   const url = getURL("/features");
   return {
+    title: "Features - Design0",
+    description:
+      "Discover Design0's powerful AI-powered image editing features.",
     alternates: {
       canonical: url,
     },

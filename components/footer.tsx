@@ -98,7 +98,13 @@ export async function Footer() {
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link href="https://github.com/design0webapp">Github</Link>
+              <Link
+                href="https://github.com/design0webapp"
+                prefetch={false}
+                target="_blank"
+              >
+                Github
+              </Link>
             </Button>
           </div>
         </div>

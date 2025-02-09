@@ -329,13 +329,13 @@ export default async function FeaturesPage() {
     <main className="min-h-screen flex flex-col">
       <CommonNavbar pageName={"Features"} />
       <section className="px-2 py-10 sm:py-12 md:py-16 xl:py-20 text-center bg-neutral-100">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tighter">
+        <h1 className="text-4xl md:text-6xl xl:text-7xl font-bold tracking-tighter">
           Design0 🎨
         </h1>
-        <p className="mt-4 text-xl md:text-2xl">
-          Effortless Design for Everyone.
+        <p className="mt-6 text-xl md:text-2xl text-neutral-600 font-light">
+          Effortless Image Editor for Everyone
         </p>
-        <Button variant="outline" asChild className="mt-6">
+        <Button variant="outline" asChild className="mt-8 animate-bounce">
           <Link href={"/"}>Try Design0 Now!</Link>
         </Button>
       </section>

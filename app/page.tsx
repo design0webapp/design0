@@ -1,9 +1,10 @@
-import Search from "@/components/search";
-import ImageCard from "@/components/image-card";
 import { CommonNavbar } from "@/components/common-navbar";
-import { listPhotos, searchPhotos } from "@/lib/unsplash";
 import { Metadata } from "next";
 import { getURL } from "@/lib/helpers";
+import StartFromUnsplash from "@/components/start-unsplash";
+import { FileSearch2, ImageUp } from "lucide-react";
+import StartFromUpload from "@/components/start-upload";
+import { Separator } from "@/components/ui/separator";
 
 export const revalidate = 60;
 
@@ -16,35 +17,36 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: {
-    query: string | undefined;
-  };
-}) {
-  const photos = searchParams.query
-    ? await searchPhotos(searchParams.query, 1, 24)
-    : await listPhotos(1, 24);
-
+export default async function HomePage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center">
+    <main className="min-h-screen flex flex-col">
       <CommonNavbar pageName={null} />
-      <div className="flex-1 px-2 py-20 mx-auto w-[64rem] max-w-full flex flex-col items-center">
-        <h1 className="text-4xl font-black">Welcome to Design0!</h1>
-        <h2 className="mt-3 text-md font-semibold mb-16">
-          Effortless Design for Everyone.
-        </h2>
-        <Search query={searchParams.query} />
-        <p className="mt-2 text-gray-400 font-bold text-sm">
-          Search And Choose Image to Edit
+      <section className="px-2 py-10 sm:py-12 md:py-16 xl:py-20 text-center bg-neutral-100">
+        <h1 className="text-4xl md:text-6xl xl:text-7xl font-bold tracking-tighter">
+          Welcome to Design0 🎨
+        </h1>
+        <p className="mt-6 text-xl md:text-2xl text-neutral-600 font-light">
+          Effortless Image Editor for Everyone
         </p>
-        <div className="mt-8 columns-1 sm:columns-2 lg:columns-3 gap-3">
-          {photos.map((photo) => (
-            <ImageCard key={photo.id} photo={photo} />
-          ))}
+        <div className="mt-8 animate-bounce">
+          <span className="text-2xl">↓</span>
         </div>
-      </div>
+      </section>
+      <section className="px-2 md:px-12 xl:px-20 py-10 md:py-16 mx-auto max-w-full flex flex-col items-center">
+        <h2 className="text-3xl md:text-4xl font-light text-center mb-8 flex items-center justify-center gap-2">
+          <ImageUp className="w-8 h-8 md:w-10 md:h-10" />
+          Upload Image to Edit
+        </h2>
+        <StartFromUpload />
+      </section>
+      <Separator className="my-4" />
+      <section className="px-2 md:px-12 xl:px-20 py-10 md:py-16 mx-auto max-w-full flex flex-col items-center">
+        <h2 className="text-3xl md:text-4xl font-light text-center mb-8 flex items-center justify-center gap-2">
+          <FileSearch2 className="w-8 h-8 md:w-10 md:h-10" />
+          Search Photo to Edit
+        </h2>
+        <StartFromUnsplash />
+      </section>
     </main>
   );
 }

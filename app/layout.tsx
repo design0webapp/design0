@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Design0",
-  description: "Effortless Design for Everyone.",
+  description: "Effortless Image Editor for Everyone.",
   authors: [{ name: "Hantian Pang", url: "https://github.com/ppaanngggg" }],
   creator: "Hantian Pang",
   publisher: "Hantian Pang",
